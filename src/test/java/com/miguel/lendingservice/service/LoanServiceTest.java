@@ -40,25 +40,13 @@ class LoanServiceTest {
         assertTrue(loans.contains(new LoanDTO(LoanType.GUARANTEED, 3)));
     }
 
-    @Test
-    void salaryAbove5000_returnsConsignment() {
-        LoanRequest request = new LoanRequest(26, cpf, name, BigDecimal.valueOf(7000.00), sp);
+    @ParameterizedTest
+    @ValueSource(doubles = {5000.00, 7000.00})
+    void salaryAtLeast5000_ageAbove30_returnsOnlyConsignment(double salary) {
+        LoanRequest request = new LoanRequest(26, cpf, name, BigDecimal.valueOf(salary), sp);
         LoanResponse response = loanService.determineEligibleLoans(request);
         assertNotNull(response);
         assertEquals(name, response.customer());
-        List<LoanDTO> loans = response.loans();
-        assertEquals(1, loans.size());
-        assertTrue(loans.contains(new LoanDTO(LoanType.CONSIGNMENT, 2)));
-    }
-
-    @Test
-    void salaryExactly5000_AgeAbove30_returnsOnlyConsignment() {
-        LoanRequest request = new LoanRequest(35, cpf, name, BigDecimal.valueOf(5000.00), sp);
-        LoanResponse response = loanService.determineEligibleLoans(request);
-
-        assertNotNull(response);
-        assertEquals(name, response.customer());
-
         List<LoanDTO> loans = response.loans();
         assertEquals(1, loans.size());
         assertTrue(loans.contains(new LoanDTO(LoanType.CONSIGNMENT, 2)));
