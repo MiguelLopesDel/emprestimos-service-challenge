@@ -17,14 +17,13 @@ public class LoanService {
         BigDecimal income = request.income();
         BigDecimal threeThousand = BigDecimal.valueOf(3000);
         BigDecimal fiveThousand = BigDecimal.valueOf(5000);
-        
-        if (income.compareTo(fiveThousand) >= 0) {
+
+        if (income.compareTo(fiveThousand) > 0) {
             loanTypes.add(new LoanDTO(LoanType.CONSIGNMENT, 2));
-            loanTypes.add(new LoanDTO(LoanType.GUARANTEED, 3));
-        } else if (income.compareTo(threeThousand) <= 0) {
-            loanTypes.add(new LoanDTO(LoanType.PERSONAL, 4));
-        } else if (income.compareTo(threeThousand) > 0 && income.compareTo(fiveThousand) <= 0 &&
-                request.age() < 30 && request.location().equalsIgnoreCase("SP")) {
+        } else if (income.compareTo(fiveThousand) == 0) {
+            loanTypes.add(new LoanDTO(LoanType.CONSIGNMENT, 2));
+        } else if (income.compareTo(threeThousand) <= 0 || (income.compareTo(fiveThousand) < 0 && income.compareTo(threeThousand) > 0 &&
+                request.age() < 30 && request.location().equalsIgnoreCase("SP"))) {
             loanTypes.add(new LoanDTO(LoanType.PERSONAL, 4));
             loanTypes.add(new LoanDTO(LoanType.GUARANTEED, 3));
         }
