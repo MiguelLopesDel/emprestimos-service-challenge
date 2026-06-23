@@ -13,10 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.result.StatusResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
@@ -49,8 +46,8 @@ class LoanControllerTest {
         LoanRequest loanRequest = new LoanRequest(26, "275.484.389-23", "Vuxaywua Zukiagou",
                 BigDecimal.valueOf(7000.00), "SP");
         LoanResponse mockResponse = new LoanResponse("Vuxaywua Zukiagou",
-                List.of(new LoanDTO(LoanType.PERSONAL, 5000.00),
-                        new LoanDTO(LoanType.GUARANTEED, 7000.00)));
+                List.of(new LoanDTO(LoanType.PERSONAL, 4),
+                        new LoanDTO(LoanType.GUARANTEED, 3)));
         when(service.determineEligibleLoans(any(LoanRequest.class))).thenReturn(mockResponse);
         mockMvc.perform(post("/customer-loans")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -58,7 +55,9 @@ class LoanControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.customer").value("Vuxaywua Zukiagou"))
                 .andExpect(jsonPath("$.loans[0].type").value("PERSONAL"))
+                .andExpect(jsonPath("$.loans[0].interest_rate").value(4))
                 .andExpect(jsonPath("$.loans[1].type").value("GUARANTEED"))
+                .andExpect(jsonPath("$.loans[1].interest_rate").value(3))
                 .andExpect(jsonPath("$.loans", hasSize(2)));
     }
 }
